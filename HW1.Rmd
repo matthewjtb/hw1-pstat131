@@ -1,0 +1,113 @@
+---
+title: "HW1"
+author: "Matthew Brennan"
+date: '2022-03-31'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+```
+
+
+# Machine Learning Main Ideas
+
+## Question 1
+
+Supervised learning is guided by actual observed response data to create predictive models or do estimation. Unsupervised learning has no guiding response data and instead looks at the structure of the observed data.
+
+## Question 2
+
+A regression model predicts qualitative (numerical) data, while a classification model predicts qualitative outcomes, when a "trial" is either a success or failure.
+
+## Question 3
+
+Regression: Training Mean Square Error, Test Mean Square Errord
+Classification: Training Error Rate, Test Error Rate
+
+## Question 4
+
+Descriptive Models: emphasize patterns and trends in data visually with graphs
+
+Inferential Models: look for significant features/variables, test theories, clustering
+
+Predictive Models: combine variables to make predictions about outcome data
+
+## Question 5
+
+Mechanistic models use parameters to make assumptions about the function f, while empirically-driven models use no parameters. In a mechanistic model, one can change the number of parameters to adjust the model, while an empirically-driven model is naturally flexible. Both models can overfit the data, either by having too many parameters (mechanistic) or too many data points (empirically-driven).
+
+An empirically-driven model is easier to understand because its predictions are solely based on the observations made. Future outcomes are intuitively predicted by looking at past results.
+
+The goal in model fitting is to find a model that has a low variance as well as low bias. A empirically-driven model that overfits by going through every data point will have no bias but a high variance. Essentially, models that are too flexible (mechanistic models with too many paramters, empirically-driven models that hem too closely to the data) will cause too much variance.
+
+## Question 6
+
+_Given a voter’s profile/data, how likely is it that they will vote in favor of the candidate?_
+
+This question is predictive because it takes a certain number of variables and uses them to predict an outcome (vote for/against).
+
+_How would a voter’s likelihood of support for the candidate change if they had personal contact with the candidate?_
+
+This question is inferential because it is testing a theory for change in likelihood based on one variable.
+
+# Exploratory Data Analysis
+
+# Exercise 1
+
+```{r}
+ggplot(mpg, aes(x = hwy)) + geom_histogram(binwidth = 1) + 
+  xlab("Highway MPG")
+
+
+```
+
+There seem to be two modes, one around 17/18 MPG, and one around 25/26 MPG.
+
+## Exercise 2
+
+```{r}
+ggplot(mpg, aes(x = hwy, y = cty)) + geom_point() + 
+  xlab("HWY MPG") + ylab("CITY MPG")
+
+
+```
+
+There is a positive linear relationship. This means that cars with a higher highway MPG also tend to have a higher city MPG.
+
+## Exercise 3
+
+```{r}
+manu <- mpg %>% group_by(manufacturer) %>% mutate(manuf_count = n())
+
+ggplot(manu, aes(y = reorder(manufacturer, -manuf_count))) + geom_bar() + 
+  ylab("Manufacturer")
+
+```
+
+Dodge produced the most cars. Lincoln produced the least.
+
+## Exercise 4
+
+```{r}
+ggplot(mpg, aes(x = cyl, y = hwy, group = cyl)) + geom_boxplot() +
+  xlab("Cylinders") +
+  ylab("Highway MPG")
+
+
+```
+It appears that as cylinders increase, the highway MPG decreases.
+
+## Exercise 5
+
+```{r}
+library(corrplot)
+mpg_corr <- cor(mpg[, c('displ', 'year', 'cyl', 'cty', 'hwy')])
+corrplot(mpg_corr, method = 'square', order = 'FPC', type = 'lower', diag = F)
+```
+
+Highway MPG and City MPG are positively correlated, as well as cylinders and engine displacement. Engine displacement and cylinders are both negatively correlated with city and highway MPG. The city and highway MPG being positively correlated makes sense to me since cars that are produced to be more fuel efficient would have this show both on the highway and in the city streets. I am surprised that year and the MPG variables are not correlated, since I thought that the versions of the cars produced in 2008 would have a higher MPG than the ones produced in 1999.
+
+
